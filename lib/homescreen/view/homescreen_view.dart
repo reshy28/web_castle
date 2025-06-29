@@ -16,11 +16,11 @@ class HomescreenView extends StatelessWidget {
     final homeController = Get.put(HomescreenController());
 
     return Scaffold(
-      backgroundColor: AppColors.bgcolor,
+      backgroundColor: AppColors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(130),
         child: AppBar(
-          backgroundColor: AppColors.bgcolor,
+          backgroundColor: AppColors.white,
           elevation: 0,
           flexibleSpace: SafeArea(
             child: Padding(
@@ -168,6 +168,9 @@ class HomescreenView extends StatelessWidget {
                 height: 100,
                 width: 150,
                 decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors.grey.withValues(alpha: 0.2),
+                  ),
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -190,6 +193,15 @@ class HomescreenView extends StatelessWidget {
   }
 
   Widget categories(HomeField field) {
+    final List<Color> bgColors = [
+      Colors.yellow.shade100,
+      Colors.blue.shade100,
+      Colors.green.shade100,
+      Colors.pink.shade100,
+      Colors.purple.shade100,
+      Colors.orange.shade100,
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -197,26 +209,37 @@ class HomescreenView extends StatelessWidget {
         sectionHeader("Our categories"),
         const SizedBox(height: 10),
         SizedBox(
-          height: 100,
+          height: 110,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               final category = field.categories?[index];
+              final bgColor = bgColors[index % bgColors.length];
+
               return Column(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.white,
-                    radius: 30,
-                    backgroundImage: category?.image != null
-                        ? NetworkImage(category!.image!)
-                        : null,
-                    child: category?.image == null
-                        ? const Icon(
-                            Icons.category,
-                            size: 30,
-                            color: AppColors.grey,
-                          )
-                        : null,
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: ClipOval(
+                      child: category?.image != null
+                          ? Image.network(
+                              category!.image!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                                  const Icon(Icons.error),
+                            )
+                          : const Icon(
+                              Icons.category,
+                              size: 30,
+                              color: AppColors.grey,
+                            ),
+                    ),
                   ),
                   const SizedBox(height: 5),
                   Text(
@@ -226,7 +249,7 @@ class HomescreenView extends StatelessWidget {
                 ],
               );
             },
-            separatorBuilder: (context, index) => const SizedBox(width: 10),
+            separatorBuilder: (context, index) => const SizedBox(width: 12),
             itemCount: field.categories?.length ?? 0,
           ),
         ),
